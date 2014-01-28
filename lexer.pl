@@ -4,6 +4,8 @@ use strict;
 
 use String::Tokenizer;
 
+my $current_line = <>;
+
 my %reserved_words =
     (
         'begin' => 1,
@@ -22,36 +24,28 @@ my %reserved_words =
     );
 
 sub main {
-    open(my $fh, '<', 'input.in') or die "Can't open file $!";
-    my $input_file = do { local $/; <$fh> };
-    
-    my $tokenizer = String::Tokenizer->new();
-    $tokenizer->handleWhitespace(String::Tokenizer->RETAIN_WHITESPACE);
-    
-    $tokenizer->tokenize($input_file);
-    my $i = $tokenizer->iterator();
-    my $token = $i->nextToken();
+    my $token = get_next_char();
     while ($token ne '?') {
         if($token =~ /[A-Za-z_]/){
-            process_identifier($token, $i);
+            process_identifier($token);
         }
         elsif($token =~ /\d/){
-            process_digit($token, $i);
+            process_digit($token);
         }
         elsif($token =~ /"/){
-            process_string($token, $i);
+            process_string($token);
         }
         elsif($token =~ /#/){
-            process_comment($token, $i);
+            process_comment($token);
         }
         elsif($token =~ m/\S/){
-            process_operator($token, $i);
+            process_operator($token);
         }
         elsif($token =~ /"\n"/){
-            $i->skipTokens(1);
-            $token = $i->nextToken();
+            chomp;
+            $token = get_next_char();
         }
-        $token = $i->nextToken();
+        $token = get_next_char();
     }
     print "End Token: " . $token; 
 }
@@ -63,9 +57,9 @@ sub process_identifier {
     $token .= $ch;
     my $not_done = 1;
     while ($not_done) {
-        $ch = $i->nextToken();
+        $ch = get_next_char();
         if ($ch =~ /\W/) {
-            $i->prevToken();
+            push_back($ch);
             $not_done = 0;
         }
         else{
@@ -88,9 +82,9 @@ sub process_digit {
     $token .= $ch;
     my $not_done = 1;
     while ($not_done) {
-        $ch = $i->nextToken();
+        $ch = get_next_char();
         if ($ch =~ /\D/) {
-            $i->prevToken();
+            push_back($ch);
             $not_done = 0;
         }
         else{
@@ -107,15 +101,15 @@ sub process_string {
     my $i = $_[1];
     $token .= $ch;
     while ($not_done) {
-        $ch = $i->nextToken();
+        $ch = get_next_char();
         if ($ch =~ /\\/) {
             $token .= $ch;
-            $ch = $i->nextToken();
+            $ch = get_next_char();
             if ($ch =~ /"/) {
                 $token .= $ch;
             }
             else {
-                $i->prevToken();
+                push_back($ch);
             }
         }
         else {
@@ -126,7 +120,7 @@ sub process_string {
             }
             elsif($ch eq "\n") {
                 print "Bad String: $token\n";
-                $i->prevToken();
+                push_back($ch);
                 $not_done = 0;
             }
         }
@@ -140,9 +134,9 @@ sub process_comment {
     my $i = $_[1];
     $token .= $ch;
     while ($not_done) {
-        $ch = $i->nextToken();
+        $ch = get_next_char();
         if ($ch eq "\n") {
-            $i->prevToken();
+            push_back($ch);
             $not_done = 0;
         }
         else {
@@ -159,39 +153,52 @@ sub process_operator {
     my $i = $_[1];
     $token .= $ch;
     if ($ch =~ /[\+\-\*\/\<\>\!\~\^\%\&\|\:\'\;\=\`\[\]\,\@\(\)\$\{\}\\]/) {
-        my $ch1 = $i->nextToken();
+        my $ch1 = get_next_char();
         if ($ch1 eq "=") {
             $token .= $ch1;
             print "Operator: $token\n";
         }
         else {
             print "Operator: $token\n";
-            $i->prevToken();
+            push_back($ch1);
         }
     }
     elsif($ch eq ".") {
-        $ch = $i->nextToken();
+        $ch = get_next_char();
         if ($ch eq ".") {
             $token .= $ch;
-            my $ch1 = $i->nextToken();
+            my $ch1 = get_next_char();
             if ($ch eq ".") {
                 $token .= $ch1;
                 print "Operator: $token\n";
             }
             else {
                 print "Operator: $token\n";
-                $i->prevToken();
+                push_back($ch1);
             }
         }
         else {
             print "Operator: $token\n";
-            $i->prevToken();
+            push_back($ch);
         }
     }
 }
 
 sub get_next_char {
-    
+   my $ch = "";
+   if ($current_line eq "") {
+        $current_line = <>;
+   }
+   else{
+        $current_line =~ s/^(.).*/$1/;
+        $ch = $1;
+        return $ch;
+   }
+}
+
+sub push_back {
+    my $ch = $_[0];
+    $current_line = $ch + $current_line;
 }
 
 
