@@ -190,15 +190,15 @@ sub get_next_char {
         $current_line = <>;
    }
    else{
-        $current_line =~ s/^(.).*/$1/;
-        $ch = $1;
+        #$current_line =~ s/^(.).*/$1/;
+        $ch = substr $current_line, 0, 1, "";
         return $ch;
    }
 }
 
 sub push_back {
     my $ch = $_[0];
-    $current_line = $ch + $current_line;
+    $current_line = $ch . $current_line;
 }
 
 
