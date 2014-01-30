@@ -51,7 +51,6 @@ sub main {
 sub process_identifier {
     my $token = "";
     my $ch = $_[0];
-    my $i = $_[1];
     $token .= $ch;
     my $not_done = 1;
     while ($not_done) {
@@ -74,9 +73,7 @@ sub process_identifier {
 
 sub process_digit {
     my $token = "";
-    my $ch = $_[0];
-    my $i = $_[1];
-    
+    my $ch = $_[0];    
     $token .= $ch;
     my $not_done = 1;
     while ($not_done) {
@@ -96,14 +93,13 @@ sub process_string {
     my $not_done = 1;
     my $token = "";
     my $ch = $_[0];
-    my $i = $_[1];
     $token .= $ch;
     while ($not_done) {
         $ch = get_next_char();
-        if ($ch =~ /\\/) {
+        if ($ch eq "\\") {
             $token .= $ch;
             $ch = get_next_char();
-            if ($ch =~ /"/) {
+            if ($ch eq "\"") {
                 $token .= $ch;
             }
             else {
@@ -112,7 +108,7 @@ sub process_string {
         }
         else {
             $token .= $ch;
-            if ($ch =~ /"/) {
+            if ($ch eq "\"") {
                 print "String: $token\n";
                 $not_done = 0;
             }
@@ -129,7 +125,6 @@ sub process_comment {
     my $not_done = 1;
     my $token = "";
     my $ch = $_[0];
-    my $i = $_[1];
     $token .= $ch;
     while ($not_done) {
         $ch = get_next_char();
@@ -148,7 +143,6 @@ sub process_operator {
     my $not_done = 1;
     my $token = "";
     my $ch = $_[0];
-    my $i = $_[1];
     $token .= $ch;
     if ($ch =~ /[\+\-\*\/\<\>\!\~\^\%\&\|\:\'\;\=\`\[\]\,\@\(\)\$\{\}\\]/) {
         my $ch1 = get_next_char();
@@ -166,7 +160,7 @@ sub process_operator {
         if ($ch eq ".") {
             $token .= $ch;
             my $ch1 = get_next_char();
-            if ($ch eq ".") {
+            if ($ch1 eq ".") {
                 $token .= $ch1;
                 print "Operator: $token\n";
             }
@@ -198,6 +192,5 @@ sub push_back {
     my $ch = $_[0];
     $current_line = $ch . $current_line;
 }
-
 
 &main();
