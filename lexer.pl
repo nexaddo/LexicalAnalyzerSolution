@@ -136,7 +136,7 @@ sub process_comment {
             $token .= $ch;
         }
     }
-    print "Comment: $token";
+    print "Comment: $token\n";
 }
 
 sub process_operator {

@@ -2,7 +2,8 @@ Reserved Word: require - 3
 String: "TVector"
 Reserved Word: class - 5
 Identifier: Vectorator
-Comment: #Manipulate VectorsReserved Word: def - 4
+Comment: #Manipulate Vectors
+Reserved Word: def - 4
 Identifier: initialize
 Operator: @
 Identifier: vecList
