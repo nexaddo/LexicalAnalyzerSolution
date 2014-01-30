@@ -33,7 +33,7 @@ sub main {
         elsif($token eq "\""){
             process_string($token);
         }
-        elsif($token =~ /#/){
+        elsif($token eq "#"){
             process_comment($token);
         }
         elsif($token =~ /\S/){
