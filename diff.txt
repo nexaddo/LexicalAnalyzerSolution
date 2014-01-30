@@ -1,0 +1,16 @@
+$ diff output.txt sample_output.out
+5c5,6
+Reserved Word: def - 4 Vectors
+---
+> Comment: #Manipulate Vectors
+> Reserved Word: def - 4
+112,113c113
+< Bad String: "asasdfasfasdf
+<
+---
+> Bad String: "asasdfasfasdf
+127c127
+< End Token: ?
+\ No newline at end of file
+---
+> End Token: ?
