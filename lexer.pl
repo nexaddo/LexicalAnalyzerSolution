@@ -2,8 +2,6 @@
 use warnings;
 use strict;
 
-use String::Tokenizer;
-
 my $current_line = <>;
 
 my %reserved_words =
@@ -32,17 +30,17 @@ sub main {
         elsif($token =~ /\d/){
             process_digit($token);
         }
-        elsif($token =~ /"/){
+        elsif($token eq "\""){
             process_string($token);
         }
         elsif($token =~ /#/){
             process_comment($token);
         }
-        elsif($token =~ m/\S/){
+        elsif($token =~ /\S/){
             process_operator($token);
         }
-        elsif($token =~ /"\n"/){
-            chomp;
+        elsif($token eq "\n"){
+            chomp $token;
             $token = get_next_char();
         }
         $token = get_next_char();
