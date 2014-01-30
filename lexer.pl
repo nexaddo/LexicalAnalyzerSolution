@@ -113,7 +113,7 @@ sub process_string {
                 $not_done = 0;
             }
             elsif($ch eq "\n") {
-                print "Bad String: $token\n";
+                print "Bad String: $token";
                 push_back($ch);
                 $not_done = 0;
             }
